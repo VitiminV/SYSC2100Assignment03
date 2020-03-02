@@ -1,60 +1,67 @@
 package assignment3;
 
-import java.util.Stack;
+import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class LanguageRecognizerG {
-    String word = "";
-    Stack<Character> characterStack = new Stack<Character>();
+
+    String InputWord = "";
+    ArrayList<Character> CharacterList = new ArrayList<Character>();
     int initialSize;
-    LanguageRecognizerG(String input){
-        word = input;
-        for (char c: input.toCharArray()) {
-            characterStack.push(c);
+
+    LanguageRecognizerG(String input) {
+        InputWord = input;
+        for (char c : input.toCharArray()) {
+            CharacterList.add(c);
         }
-        initialSize = characterStack.size();
+        initialSize = CharacterList.size();
+        ListIterator WordItr = CharacterList.listIterator(0);
     }
 
-    private boolean recursiveRecogG(){
-        //BASE CASE: list is 1 chars long, and it is <E>
-        if (this.initialSize == 1){
-            Character cur = characterStack.pop();
-            if (cur.equals("&") || cur.equals("#")) {
+
+    private boolean recursiveRecogG(ArrayList<Character> WordList) {
+        if (WordList.size() == 0) {
+            return true;
+        }
+        if (WordList.size() == 1) {
+            if (WordList.get(0) == '&' | WordList.get(0) == '#') {
                 return true;
             }
         }
-        //BASE CASE: list is empty
-        if (this.characterStack.size() == 0) {
-            return true;
-        }
-        //DIFFERENT BASE CASES FOR characterStack > 2 chars long
-        else {
-            //BASE CASE: we're at the last char in the list. is it <V>?
-            if (this.characterStack.size() == 1) {
-                Character cur = characterStack.pop();
-                if (cur.equals("W") || cur.equals("A")) {
+        if (WordList.size() == 2) {
+            if (WordList.get(0) == 'W' | WordList.get(0) == 'A') {
+                if (WordList.get(1) == '&' | WordList.get(1) == '#') {
                     return true;
                 }
             }
-            //BASE CASE: we have 2 chars left. are they <V> <E>?
-            if (this.characterStack.size() == 2) {
-                Character cur = characterStack.pop();
-                if (cur.equals("W") || cur.equals("A")) {
-                    cur = characterStack.pop();
-                    if (cur.equals("&") || cur.equals("#")) {
+            if (WordList.get(0) == '&' | WordList.get(0) == '#') {
+                if (WordList.get(1) == 'W' | WordList.get(1) == 'A') {
+                    return true;
+                }
+            }
+        }
+        if (WordList.size() > 2) {
+            if (WordList.get(0) == '&' | WordList.get(0) == '#') {
+                if (WordList.get(WordList.size() - 1) == 'W' | WordList.get(WordList.size() - 1) == 'A') {
+                    ArrayList NewList = (ArrayList) WordList.subList(1, WordList.size() - 2);
+                    if (recursiveRecogG(NewList)) {
                         return true;
                     }
                 }
-            }
-            else {
-                return recursiveRecogG();
             }
         }
         return false;
     }
 
-    public void recursivePrintG(){
-
-
+    public void recursivePrintG() {
+        boolean result = recursiveRecogG(CharacterList);
+        if (result) {
+            System.out.print("Recursion: Word \"" + InputWord + "\" IS a word of the G language. \n \n");
+        } else {
+            System.out.print("Recursion: Word \"" + InputWord + "\" IS NOT a word of the G language. \n \n");
+        }
     }
 
 }

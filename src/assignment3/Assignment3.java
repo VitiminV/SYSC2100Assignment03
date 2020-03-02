@@ -30,7 +30,7 @@ public class Assignment3 {
             System.out.println(e);
         }
 
-    infixCalculator w2 = new infixCalculator(input);
+    InfixCalculator w2 = new InfixCalculator(input);
     w2.evaluateInfix();
     }
 }
