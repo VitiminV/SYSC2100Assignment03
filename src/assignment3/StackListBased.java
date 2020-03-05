@@ -1,7 +1,7 @@
 package assignment3;
 
 import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 public class StackListBased {
     LinkedList<Object> items;
@@ -38,6 +38,9 @@ public class StackListBased {
     }
 
     public Object pop() {
+        if (items.peek() == null) {
+            throw new NoSuchElementException();
+        }
         return items.pop();
     }
 

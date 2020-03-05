@@ -1,6 +1,8 @@
 package assignment3;
 
 
+import java.util.Stack;
+
 public class InfixCalculator {
     String expression = null;
 
@@ -9,13 +11,13 @@ public class InfixCalculator {
     }
 
     private int operatorPrecedence(String c) {
-        if (c == "+" | c == "-") {
+        if (c.equals("+") | c.equals("-")) {
             return 0;
         }
-        if (c == "*" | c == "/") {
+        if (c.equals("*") | c.equals("/")) {
             return 1;
         }
-        if (c == "(" | c == ")") {
+        if (c.equals("(") | c.equals(")")) {
             return 2;
         } else {
             return -1;
@@ -23,7 +25,7 @@ public class InfixCalculator {
     }
 
     private boolean isANumber(String c) {
-        if (c == "0" | c == "1" | c == "2" | c == "3" | c == "4" | c == "5" | c == "6" | c == "7" | c == "8" | c == "9") { //if c is a number,
+        if (c.equals("0") | c.equals("1") | c.equals("2") | c.equals("3") | c.equals("4") | c.equals("5") | c.equals("6") | c.equals("7") | c.equals("8") | c.equals("9")) { //if c is a number,
             return true;
         }
         return false;
@@ -45,14 +47,15 @@ public class InfixCalculator {
             expressionArray[a] = c.toString();
             a++;
         }
-        for (int i = 0; i > expressionArray.length; i++) {
+        for (int i = 0; i < expressionArray.length; i++) {
             String c = expressionArray[i];
-            if (c == " ") {
+            if (c.equals(" ")) {
+                continue;
             } //discard whitespace
             if (isANumber(c)) { //if c is a number,
                 int k = 1;
                 String number = "" + c;
-                while (isANumber(expressionArray[i + k])) {
+                while (i + k < expressionArray.length && isANumber(expressionArray[i + k])) {
                     number = number + expressionArray[i + k];
                     k++;
                 }
@@ -61,19 +64,20 @@ public class InfixCalculator {
                     i = i + k - 1;
                 } else {
                     postfixStack.push(c);
+                    continue;
                 }
             }
-            if (c == "(") {
+            if (c.equals("(")) {
                 tempStack.push(c);
             }
-            if (c == ")") {
-                while ((String) postfixStack.peek() != "(") {
+            if (c.equals(")")) {
+                while (!((String) postfixStack.peek()).equals("(")) {
                     postfixStack.push(tempStack.pop());
                 }
                 Object garbageParenthesis = tempStack.pop();
             }
             if (isAnOperator(c)) {
-                while (!tempStack.isEmpty() && (String) tempStack.peek() != "(" && operatorPrecedence(c) <= operatorPrecedence((String) tempStack.peek())) {
+                while (!tempStack.isEmpty() && !((String) tempStack.peek()).equals("(") && operatorPrecedence(c) <= operatorPrecedence((String) tempStack.peek())) {
                     postfixStack.push(tempStack.pop());
                 }
                 tempStack.push(c);
@@ -87,8 +91,12 @@ public class InfixCalculator {
 
     private String postfixString(StackListBased postfixStack) {
         String s = "";
-        for (int i = 0; i < postfixStack.getSize(); i++) {
-            s = s + postfixStack.pop();
+        StackListBased reverseStack = new StackListBased();
+        while (!postfixStack.isEmpty()) {
+            reverseStack.push(postfixStack.pop());
+        }
+        while (!reverseStack.isEmpty()) {
+            s = s + reverseStack.pop().toString();
         }
         return s;
     }
@@ -100,9 +108,10 @@ public class InfixCalculator {
             String c = (String) postfixStack.pop();
             if (isANumber(c)) {
                 NumberStack.push(c);
-            } else {
-                int a = (int) NumberStack.pop();
-                int b = (int) NumberStack.pop();
+            }
+            else {
+                int a = (int) postfixStack.pop();
+                int b = (int) postfixStack.pop();
                 if (c.equals("+")) {
                     NumberStack.push(a + b);
                 }
@@ -115,18 +124,24 @@ public class InfixCalculator {
                 if (c.equals("/")) {
                     NumberStack.push(a / b);
                 }
+                else {
+                    String unconvertB = "";
+                    NumberStack.push(unconvertB + (char) b);
+                    String unconvertA = "";
+                    NumberStack.push(unconvertA + (char) a);
 
+                }
             }
         }
         return (int) NumberStack.pop();
     }
 
     public void evaluateInfix() {
-        System.out.print("infix: " + this.expression);
+        System.out.print("infix: " + this.expression + "\n");
         StackListBased convertedStack = convertPostfix();
-        System.out.print("postfix: " + postfixString(convertedStack));
-        int result = getPostfix(convertedStack);
-        System.out.print("result: " + result);
+        StackListBased convertedStack2 = convertPostfix();
+        System.out.print("postfix: " + postfixString(convertedStack) + "\n");
+        int result = getPostfix(convertedStack2);
+        System.out.print("result: " + result + "\n");
     }
-
 }
