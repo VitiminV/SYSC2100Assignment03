@@ -110,8 +110,8 @@ public class InfixCalculator {
                 NumberStack.push(c);
             }
             else {
-                int a = (int) postfixStack.pop();
-                int b = (int) postfixStack.pop();
+                int a = Integer.parseInt((String) postfixStack.pop());
+                int b = Integer.parseInt((String) postfixStack.pop());
                 if (c.equals("+")) {
                     NumberStack.push(a + b);
                 }
@@ -123,13 +123,6 @@ public class InfixCalculator {
                 }
                 if (c.equals("/")) {
                     NumberStack.push(a / b);
-                }
-                else {
-                    String unconvertB = "";
-                    NumberStack.push(unconvertB + (char) b);
-                    String unconvertA = "";
-                    NumberStack.push(unconvertA + (char) a);
-
                 }
             }
         }
